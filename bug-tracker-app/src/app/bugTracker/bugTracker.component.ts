@@ -34,7 +34,7 @@ import { BugOperationsService } from './services/bugOperations.service';
 						(click)="onBugClick(bug)"
 						[ngClass]="{closed : bug.isClosed}"
 					>
-						{{bug | json}}
+						{{bug.name | trimText:40}}
 					</span>
 					<div class="datetime">[Created At]</div>
 				</li>
@@ -47,9 +47,8 @@ export class BugTrackerComponent{
 	
 	bugs : IBug[] = [];
 	
-
 	constructor( private bugOperations : BugOperationsService){
-
+		
 	}
 
 	onCreateClick(bugName:string){
@@ -62,8 +61,9 @@ export class BugTrackerComponent{
 	}
 
 	getClosedCount(){
-		return this.bugs
-					.reduce((prevResult, bug) => bug.isClosed ? ++prevResult : prevResult, 0);
+		return this
+			.bugs
+			.reduce((prevResult, bug) => bug.isClosed ? ++prevResult : prevResult, 0);
 	}
 
 	onRemoveClosedClick(){
