@@ -8,7 +8,7 @@ import { BugOperationsService } from './services/bugOperations.service';
 		<h1>Bug Tracker</h1>
 		<hr>
 		<section class="stats">
-			<span class="closed">{{getClosedCount()}}</span>
+			<span class="closed">{{bugs | closedCount}}</span>
 			<span> / </span>
 			<span>{{bugs.length}}</span>
 		</section>
@@ -24,8 +24,8 @@ import { BugOperationsService } from './services/bugOperations.service';
 		</section>
 		<section class="edit">
 			<label for="">Bug Name :</label>
-			<input type="text" #txtBugName>
-			<input type="button" value="Create New" (click)="onCreateClick(txtBugName.value)">
+			<input type="text" [(ngModel)]="newBugName">
+			<input type="button" value="Create New" (click)="onCreateClick()">
 		</section>
 		<section class="list">
 			<ol>
@@ -46,6 +46,8 @@ import { BugOperationsService } from './services/bugOperations.service';
 export class BugTrackerComponent{
 	
 	bugs : IBug[] = [];
+
+	newBugName : string = '';
 	
 	constructor( private bugOperations : BugOperationsService){
 		this.bugs.push(this.bugOperations.createNew('Server communication failure'));
@@ -54,19 +56,14 @@ export class BugTrackerComponent{
 		this.bugs.push(this.bugOperations.createNew(('Data integrity checks failed')));
 	}
 
-	onCreateClick(bugName:string){
-		let newBug : IBug = this.bugOperations.createNew(bugName);
-		this.bugs.push(newBug);
+	onCreateClick(){
+		let newBug : IBug = this.bugOperations.createNew(this.newBugName);
+		this.bugs = [...this.bugs, newBug];
 	}
 
 	onBugClick(bugToToggle){
-		this.bugOperations.toggle(bugToToggle);
-	}
-
-	getClosedCount(){
-		return this
-			.bugs
-			.reduce((prevResult, bug) => bug.isClosed ? ++prevResult : prevResult, 0);
+		var toggledBug = this.bugOperations.toggle(bugToToggle);
+		this.bugs = this.bugs.map(bug => bug === bugToToggle ? toggledBug : bug);
 	}
 
 	onRemoveClosedClick(){
