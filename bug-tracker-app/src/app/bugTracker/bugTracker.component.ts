@@ -14,13 +14,13 @@ import { BugOperationsService } from './services/bugOperations.service';
 		</section>
 		<section class="sort">
 			<label for="">Order By :</label>
-			<select name="" id="">
+			<select [(ngModel)]="sortBugsBy">
 				<option value="name">Name</option>
-				<option value="">Status</option>
-				<option value="">Created At</option>
+				<option value="isClosed">Status</option>
+				<option value="createdAt">Created At</option>
 			</select>
 			<label for="">Descending ? :</label>
-			<input type="checkbox" name="" id="">
+			<input type="checkbox" [(ngModel)]="sortBugDescending">
 		</section>
 		<section class="edit">
 			<label for="">Bug Name :</label>
@@ -29,7 +29,7 @@ import { BugOperationsService } from './services/bugOperations.service';
 		</section>
 		<section class="list">
 			<ol>
-				<li *ngFor="let bug of bugs">
+				<li *ngFor="let bug of ( bugs | sort:sortBugsBy:sortBugDescending)">
 					<span class="bugname" 
 						(click)="onBugClick(bug)"
 						[ngClass]="{closed : bug.isClosed}"
@@ -48,7 +48,10 @@ export class BugTrackerComponent{
 	bugs : IBug[] = [];
 	
 	constructor( private bugOperations : BugOperationsService){
-		
+		this.bugs.push(this.bugOperations.createNew('Server communication failure'));
+		this.bugs.push(this.bugOperations.createNew(('Application not responding')));
+		this.bugs.push(this.bugOperations.createNew(('User actions not recognized')));
+		this.bugs.push(this.bugOperations.createNew(('Data integrity checks failed')));
 	}
 
 	onCreateClick(bugName:string){
