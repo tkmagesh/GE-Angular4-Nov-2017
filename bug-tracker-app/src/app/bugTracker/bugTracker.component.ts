@@ -30,7 +30,7 @@ import { IBug } from './models/IBug';
 		<section class="list">
 			<ol>
 				<li *ngFor="let bug of bugs">
-					<span class="bugname">{{bug}}</span>
+					<span class="bugname" (click)="onBugClick(bug)">{{bug | json}}</span>
 					<div class="datetime">[Created At]</div>
 				</li>
 			</ol>
@@ -49,5 +49,9 @@ export class BugTrackerComponent{
 			createdAt : new Date()
 		}
 		this.bugs.push(newBug);
+	}
+
+	onBugClick(bugToToggle){
+		bugToToggle.isClosed = !bugToToggle.isClosed;
 	}
 }
