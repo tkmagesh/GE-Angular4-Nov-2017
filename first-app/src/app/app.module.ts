@@ -6,6 +6,7 @@ import { AppComponent } from './app.component';
 import { GreeterComponent } from './greeter/greeter.component';
 import { Calculator1Component } from './calculator/calculator1.component';
 import { Calculator2Component } from './calculator/calculator2.component';
+import { CalculatorResultComponent } from './calculator/calculatorResult.component';
 
 @NgModule({
   declarations: [
@@ -13,6 +14,7 @@ import { Calculator2Component } from './calculator/calculator2.component';
     , GreeterComponent
     , Calculator1Component
     , Calculator2Component
+    , CalculatorResultComponent
   ],
   imports: [
   	FormsModule
