@@ -12,6 +12,8 @@ export class BugTrackerComponent implements OnInit {
 	bugs : IBug[] = [];
 
 	newBugName : string = '';
+	sortBugsBy : string = '';
+	sortBugDescending : boolean  = false;
 	
 	constructor( private bugApi : BugApiService ){
 		
