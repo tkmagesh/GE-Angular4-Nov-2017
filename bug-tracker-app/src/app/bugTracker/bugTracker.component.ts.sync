@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core'
 import { IBug } from './models/IBug';
-import { BugApiService } from './services/bugApi.service';
+import { BugStorageService } from './services/bugStorage.service';
 
 
 @Component({
@@ -13,14 +13,12 @@ export class BugTrackerComponent implements OnInit {
 
 	newBugName : string = '';
 	
-	constructor( private bugApi : BugApiService ){
+	constructor( private bugStorage : BugStorageService){
 		
 	}
 
 	ngOnInit(){
-		this.bugApi
-			.getAll()
-			.subscribe(bugs => this.bugs = bugs);
+		this.bugs = this.bugStorage.getAll();
 	}
 
 	onBugCreated(newBug : IBug){
@@ -28,17 +26,14 @@ export class BugTrackerComponent implements OnInit {
 	}	
 
 	onBugClick(bugToToggle){
-		this.bugApi
-			.toggle(bugToToggle)
-			.subscribe(toggledBug => this.bugs = this.bugs.map(
-				(bug) => bug === bugToToggle ? toggledBug : bug)
-			);
+		var toggledBug = this.bugStorage.toggle(bugToToggle);
+		this.bugs = this.bugs.map(bug => bug === bugToToggle ? toggledBug : bug);
 	}
 
 	onRemoveClosedClick(){
 		this.bugs
 			.filter(bug => bug.isClosed)
-			.forEach(bug => this.bugApi.remove(bug).subscribe(_ => {}));
+			.forEach(bug => this.bugStorage.remove(bug));
 			
 		this.bugs = this.bugs.filter(bug => !bug.isClosed);
 	}
