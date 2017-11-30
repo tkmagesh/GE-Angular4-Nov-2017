@@ -1,6 +1,8 @@
-import { Component } from '@angular/core'
+import { Component, OnInit } from '@angular/core'
 import { IBug } from './models/IBug';
-import { BugOperationsService } from './services/bugOperations.service';
+//import { BugOperationsService } from './services/bugOperations.service';
+import { BugStorageService } from './services/bugStorage.service';
+
 
 @Component({
 	selector : 'bug-tracker',
@@ -36,34 +38,42 @@ import { BugOperationsService } from './services/bugOperations.service';
 					>
 						{{bug.name | trimText:40}}
 					</span>
-					<div class="datetime">[Created At]</div>
+					<div class="datetime">{{bug.createdAt | date:'dd-MMM-yyyy hh:mm:ss a'}}</div>
 				</li>
 			</ol>
 			<input type="button" value="Remove Closed" (click)="onRemoveClosedClick()">
 		</section>
 	`
 })
-export class BugTrackerComponent{
+export class BugTrackerComponent implements OnInit {
 	
 	bugs : IBug[] = [];
 
 	newBugName : string = '';
 	
-	constructor( private bugOperations : BugOperationsService){
+	constructor( private bugStorage : BugStorageService){
 		
 	}
 
+	ngOnInit(){
+		this.bugs = this.bugStorage.getAll();
+	}
+
 	onCreateClick(){
-		let newBug : IBug = this.bugOperations.createNew(this.newBugName);
+		let newBug : IBug = this.bugStorage.addNew(this.newBugName);
 		this.bugs = [...this.bugs, newBug];
 	}
 
 	onBugClick(bugToToggle){
-		var toggledBug = this.bugOperations.toggle(bugToToggle);
+		var toggledBug = this.bugStorage.toggle(bugToToggle);
 		this.bugs = this.bugs.map(bug => bug === bugToToggle ? toggledBug : bug);
 	}
 
 	onRemoveClosedClick(){
+		this.bugs
+			.filter(bug => bug.isClosed)
+			.forEach(bug => this.bugStorage.remove(bug));
+			
 		this.bugs = this.bugs.filter(bug => !bug.isClosed);
 	}
 }
